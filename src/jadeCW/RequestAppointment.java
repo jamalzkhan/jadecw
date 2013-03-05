@@ -1,11 +1,8 @@
 package jadeCW;
 
 import java.io.IOException;
-import java.util.HashSet;
 
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -52,10 +49,10 @@ public class RequestAppointment extends Behaviour {
 					e.printStackTrace();
 				}
 				request.setConversationId("allocate-appointments");
-				request.setReplyWith("allocate-appointments" + " " + System.currentTimeMillis()); //gjagsdkl;a
+				request.setReplyWith("allocate-appointments" + " " + System.currentTimeMillis());
 				patientAgent.send(request);
 				reqTemplate = MessageTemplate.and(MessageTemplate.MatchConversationId("allocate-appointments"),
-						MessageTemplate.MatchInReplyTo(request.getReplyWith()));  //sdyofoasygf
+						MessageTemplate.MatchInReplyTo(request.getReplyWith())); 
 				step = 1;
 			}
 		}
@@ -63,8 +60,11 @@ public class RequestAppointment extends Behaviour {
 	
 	private void receiveReply() {
 		ACLMessage reply = patientAgent.receive();
+		
 		if (reply != null) {
-			if (reply.getPerformative() == ACLMessage.AGREE) {
+			if (!reqTemplate.match(reply)) {
+				System.out.println("Message template doesn't match!");
+			} else if (reply.getPerformative() == ACLMessage.AGREE) {
 				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
 				step = 0;
 			} else if (reply.getPerformative() == ACLMessage.REFUSE) {
