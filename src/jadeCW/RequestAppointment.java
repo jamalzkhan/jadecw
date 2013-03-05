@@ -28,7 +28,6 @@ public class RequestAppointment extends Behaviour {
 				receiveReply();
 				break;
 		}
-		step++;
 	}
 
 	@Override
@@ -39,7 +38,7 @@ public class RequestAppointment extends Behaviour {
 
 	private void sendRequest() {
 		if (patientAgent.allocationAgent != null) {
-			System.out.println("performing first action on agent " + patientAgent.getName());
+//			System.out.println("performing first action on agent " + patientAgent.getName());
 			if (!patientAgent.hasAppointment) {
 				ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 				request.addReceiver(patientAgent.allocationAgent);
@@ -48,6 +47,7 @@ public class RequestAppointment extends Behaviour {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				request.setSender(patientAgent.getAID());
 				request.setConversationId("allocate-appointments");
 				request.setReplyWith("allocate-appointments" + " " + System.currentTimeMillis());
 				patientAgent.send(request);
@@ -59,13 +59,14 @@ public class RequestAppointment extends Behaviour {
 	}
 	
 	private void receiveReply() {
-		ACLMessage reply = patientAgent.receive();
+		ACLMessage reply = patientAgent.receive(reqTemplate);
 		
 		if (reply != null) {
 			if (!reqTemplate.match(reply)) {
 				System.out.println("Message template doesn't match!");
 			} else if (reply.getPerformative() == ACLMessage.AGREE) {
 				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
+				patientAgent.hasAppointment = true;
 				step = 0;
 			} else if (reply.getPerformative() == ACLMessage.REFUSE) {
 				patientAgent.allocatedAppointment = -1;	

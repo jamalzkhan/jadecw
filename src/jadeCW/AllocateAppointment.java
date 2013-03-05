@@ -27,30 +27,26 @@ public class AllocateAppointment extends CyclicBehaviour {
 
 		ACLMessage request = hospitalAgent.receive(reqTemplate);
 		
-		if (reqTemplate != null){
+		if (request != null){
 			AID patientAgent = request.getSender();
 			int timeSlot = allocateAppointment(new HashMap<Integer, HashSet<Integer>>(), patientAgent);
-			ACLMessage reply; 
+			ACLMessage reply = request.createReply();
 			
 			if (timeSlot == -1){
-				reply =  new ACLMessage(ACLMessage.REFUSE);
+				reply.setPerformative(ACLMessage.REFUSE);
 			}
 			else {
-				reply = new ACLMessage(ACLMessage.AGREE);
-				try {
-					reply.setContentObject(timeSlot);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				reply.setPerformative(ACLMessage.AGREE);
+				reply.setContent(Integer.toString(timeSlot));
 			}
 			
-			reply.setConversationId(request.getConversationId());
-			reply.setReplyWith(request.getReplyWith());
+			//reply.setConversationId(request.getConversationId());
+			//reply.setReplyWith(request.getReplyWith());
 			hospitalAgent.send(reply);
 			
 		}
 		else{
-			block();
+			//block();
 		}
 		
 	}
