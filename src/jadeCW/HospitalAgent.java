@@ -13,8 +13,6 @@ public class HospitalAgent extends Agent {
 
 	public void setup(){
 
-		System.out.println("Created hospital agent");
-		
 		int totalAppointments = 0;
 		
 	  	Object[] args = getArguments();
