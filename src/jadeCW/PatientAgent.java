@@ -93,4 +93,9 @@ public class PatientAgent extends Agent {
 		
 	}
 	
+	public void takeDown(){
+		System.out.println(this.getName() + ": Appointment " + this.allocatedAppointment);
+	}
+
+	
 }
