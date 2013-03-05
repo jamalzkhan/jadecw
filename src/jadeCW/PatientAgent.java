@@ -18,8 +18,14 @@ import jade.util.leap.Iterator;
 
 public class PatientAgent extends Agent {
 	
-	private HashMap<Integer, HashSet<Integer>> preferences 
+	public HashMap<Integer, HashSet<Integer>> preferences 
 						= new HashMap<Integer, HashSet<Integer>>();
+	
+	public HashSet<DFAgentDescription> agentDescriptions = new HashSet<DFAgentDescription>();
+	
+	public boolean hasAppointment = false;
+	public int allocatedAppointment = -1;
+	public AID allocationAgent = null;
 
 	public void setup(){
 
@@ -71,6 +77,7 @@ public class PatientAgent extends Agent {
 		  					if (sd.getType().equals(serviceType)) {
 	  							System.out.println("Allocate appointment service found:");
 		  						System.out.println("- Service \""+sd.getName()+"\" provided by agent "+provider.getName());
+		  						allocationAgent = provider;
 		  					}
 		  				}
 		  			}
