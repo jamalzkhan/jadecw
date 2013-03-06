@@ -53,6 +53,9 @@ public class PatientAgent extends Agent {
 		addBehaviour(new FindAppointmentOwner(this));
 	}
 	
+	public void excludeSlotAndSetNextSlot(){
+		// TODO: Code that will improve the hig
+	}
 	
 	public int preferedAppointmentPriority(){
 		
