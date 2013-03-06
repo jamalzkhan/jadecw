@@ -50,6 +50,7 @@ public class PatientAgent extends Agent {
 
 		subscribe();
 		addBehaviour(new RequestAppointment(this));
+		addBehaviour(new FindAppointmentOwner(this));
 	}
 	
 	

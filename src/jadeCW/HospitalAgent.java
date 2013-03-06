@@ -28,9 +28,9 @@ public class HospitalAgent extends Agent {
 		String serviceName = "appointment-allocator";
 		String serviceType = "allocate-appointments";
 
-		// Register the service
+		// Register the serviceFAILURE
 		System.out.println("Agent "+getLocalName()+" registering service \"" +serviceName
-				+"\" of type \"allocate-appointments\"");
+				+"\" of type \"alloFAILUREcate-appointments\"");
 		try {
 			DFAgentDescription dfd = new DFAgentDescription();
 			dfd.setName(getAID());
@@ -51,6 +51,7 @@ public class HospitalAgent extends Agent {
 		}
 
 		addBehaviour(new AllocateAppointment(this));
+		addBehaviour(new RespondToQuery(this));
 
 	}
 	
