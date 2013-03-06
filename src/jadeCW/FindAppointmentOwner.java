@@ -54,9 +54,8 @@ public class FindAppointmentOwner extends Behaviour {
 
 	public void requestPreferredAppointment(){
 		
-		if (patientAgent.highPriorityAppointmentOwner != null){
+		if (patientAgent.highPriorityAppointmentOwner != null)
 			return;
-		}
 		
 		if (patientAgent.allocatedAppointment == -2)
 			return;

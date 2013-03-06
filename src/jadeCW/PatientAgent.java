@@ -51,8 +51,8 @@ public class PatientAgent extends Agent {
 		subscribe();
 		addBehaviour(new RequestAppointment(this));
 		addBehaviour(new FindAppointmentOwner(this));
-		//addBehaviour(new ProposeSwap(this));
-		//addBehaviour(new RespondToProposal1(this));
+		addBehaviour(new ProposeSwap(this));
+		addBehaviour(new RespondToProposal1(this));
 		
 	}
 	
