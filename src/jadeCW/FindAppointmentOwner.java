@@ -53,7 +53,10 @@ public class FindAppointmentOwner extends Behaviour {
 	}
 
 	public void requestPreferredAppointment(){
-
+		
+		if (patientAgent.allocatedAppointment == -2)
+			return;
+		
 		this.assignedPriority = patientAgent.preferedAppointmentPriority();
 
 		if (assignedPriority == -1)
@@ -100,6 +103,7 @@ public class FindAppointmentOwner extends Behaviour {
 		ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 		request.addReceiver(patientAgent.allocationAgent);
 		request.setContent(nextSlot.toString());
+		System.out.println(patientAgent.getName() + " requesting slot " + nextSlot.toString());
 
 		request.setSender(patientAgent.getAID());
 		request.setConversationId(conversationId);
@@ -118,8 +122,13 @@ public class FindAppointmentOwner extends Behaviour {
 			if (!reqTemplate.match(reply)) {
 				System.err.println("Message template doesn't match!");
 			} else {
-				AID resourceOwner = (AID) reply.getContentObject();
-				patientAgent.highPriorityAppointmentOwner = resourceOwner;
+				if (reply.getPerformative() == ACLMessage.FAILURE)
+					System.out.println(reply.getContent());
+				else {
+					AID resourceOwner = (AID) reply.getContentObject();
+					patientAgent.highPriorityAppointmentOwner = resourceOwner;
+					System.out.println("slot owned by " + resourceOwner.getName());
+				}
 			}
 		} else {
 			block();

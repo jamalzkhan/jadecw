@@ -20,7 +20,7 @@ public class RespondToQuery extends CyclicBehaviour {
 
 	@Override
 	public void action() {
-		String conversationId = "allocate-appointments";
+		String conversationId = "find-appointment-owner";
 		MessageTemplate reqTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
 				MessageTemplate.MatchConversationId(conversationId));
 
@@ -36,28 +36,31 @@ public class RespondToQuery extends CyclicBehaviour {
 				// fail: slot not existing
 				// send rejection
 				reply.setPerformative(ACLMessage.FAILURE);
-			}
-						
-			AID owner = hospitalAgent.appointments[requestedSlot];
-			reply.setPerformative(ACLMessage.INFORM);
-			
-			if (owner == null) {
-				//slot free
-				//send that it's free
-				try {
-					reply.setContentObject(hospitalAgent.getAID());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				reply.setContent("Slot not existent");
+				
 			} else {
-				//slot taken
-				//send name
-				try {
-					reply.setContentObject(owner);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+				AID owner = hospitalAgent.appointments[requestedSlot];
+				reply.setPerformative(ACLMessage.INFORM);
+
+				if (owner == null) {
+					//slot free
+					//send that it's free
+					try {
+						reply.setContentObject(hospitalAgent.getAID());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					//slot taken
+					//send name
+					try {
+						reply.setContentObject(owner);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 			
@@ -65,7 +68,7 @@ public class RespondToQuery extends CyclicBehaviour {
 			
 		}
 		else{
-			block();
+			//block();
 		}
 		
 	}
