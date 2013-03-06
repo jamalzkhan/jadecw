@@ -80,26 +80,8 @@ public class PatientAgent extends Agent {
 								break;
 							}
 						}
-						//		  			for (int i = 0; i < results.length; ++i) {
-						//		  				DFAgentDescription dfd = results[i];
-						//		  				AID provider = dfd.getName();
-						//		  				// The same agent may provide several services; we are only interested
-						//		  				// in the weather-forcast one
-						//		  				Iterator it = dfd.getAllServices();
-						//		  				while (it.hasNext()) {
-						//		  					ServiceDescription sd = (ServiceDescription) it.next();
-						//		  					if (sd.getType().equals(serviceType)) {
-						//	  							System.out.println("Allocate appointment service found:");
-						//		  						System.out.println("- Service \""+sd.getName()+"\" provided by agent "+provider.getName());
-						//		  						allocationAgent = provider;
-						//		  					}
-						//		  				}
-
-						
 					}	
 					System.out.println();
-					
-
 				}
 				catch (FIPAException fe) {
 					fe.printStackTrace();
