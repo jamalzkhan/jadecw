@@ -7,9 +7,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
-import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
@@ -29,8 +27,6 @@ public class PatientAgent extends Agent {
 
 	public void setup(){
 
-		int totalAppointments = 0;
-
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
 
@@ -49,7 +45,6 @@ public class PatientAgent extends Agent {
 		}
 
 		subscribe();
-
 		addBehaviour(new RequestAppointment(this));
 	}
 	

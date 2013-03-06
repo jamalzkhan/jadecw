@@ -1,6 +1,5 @@
 package jadeCW;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -39,14 +38,11 @@ public class AllocateAppointment extends CyclicBehaviour {
 				reply.setPerformative(ACLMessage.AGREE);
 				reply.setContent(Integer.toString(timeSlot));
 			}
-			
-			//reply.setConversationId(request.getConversationId());
-			//reply.setReplyWith(request.getReplyWith());
 			hospitalAgent.send(reply);
 			
 		}
 		else{
-			//block();
+			block();
 		}
 		
 	}

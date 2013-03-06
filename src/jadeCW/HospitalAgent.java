@@ -1,7 +1,6 @@
 package jadeCW;
 
-import java.util.HashMap;
-import java.util.HashSet;
+
 
 import jade.core.Agent;
 import jade.core.AID;
@@ -10,13 +9,11 @@ import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAAgentManagement.Property;
 
 public class HospitalAgent extends Agent {
 
-	public int totalAppointments = 0;
+	public int totalAppointments;
 	public AID[] appointments;
-
 	
 
 	public void setup(){

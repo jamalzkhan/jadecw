@@ -19,7 +19,6 @@ public class RequestAppointment extends Behaviour {
 
 	@Override
 	public void action() {
-		// TODO Auto-generated method stub
 		switch (step) {
 			case 0:
 				sendRequest();
@@ -32,7 +31,6 @@ public class RequestAppointment extends Behaviour {
 
 	@Override
 	public boolean done() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -63,7 +61,7 @@ public class RequestAppointment extends Behaviour {
 		
 		if (reply != null) {
 			if (!reqTemplate.match(reply)) {
-				System.out.println("Message template doesn't match!");
+				System.err.println("Message template doesn't match!");
 			} else if (reply.getPerformative() == ACLMessage.AGREE) {
 				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
 				patientAgent.hasAppointment = true;
