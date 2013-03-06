@@ -83,8 +83,11 @@ public class ProposeSwap extends Behaviour {
 	}
 	
 	public void requestSwapAppointments(){
+
 		if (patientAgent.highPriorityAppointmentOwner != null){
 			
+			System.out.println("Proposing to swap");
+
 			String conversationId = "request-swap";
 			ACLMessage request = new ACLMessage(ACLMessage.PROPOSE);
 			request.addReceiver(patientAgent.highPriorityAppointmentOwner);

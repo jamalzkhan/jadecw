@@ -30,6 +30,7 @@ public class RespondToProposal1 extends Behaviour {
 				System.err.println("Message template doesn't match!");
 			} 
 			else if (propsal.getPerformative() == ACLMessage.PROPOSE){
+				
 				int recievedTimeSlot = Integer.valueOf(propsal.getContent());
 				ACLMessage reply = propsal.createReply();
 
