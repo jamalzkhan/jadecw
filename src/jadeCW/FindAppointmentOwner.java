@@ -54,6 +54,10 @@ public class FindAppointmentOwner extends Behaviour {
 
 	public void requestPreferredAppointment(){
 		
+		if (patientAgent.highPriorityAppointmentOwner != null){
+			return;
+		}
+		
 		if (patientAgent.allocatedAppointment == -2)
 			return;
 		
@@ -129,6 +133,7 @@ public class FindAppointmentOwner extends Behaviour {
 					patientAgent.highPriorityAppointmentOwner = resourceOwner;
 					System.out.println("slot owned by " + resourceOwner.getName());
 				}
+				step = 0;
 			}
 		} else {
 			block();

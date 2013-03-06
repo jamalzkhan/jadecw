@@ -51,13 +51,31 @@ public class PatientAgent extends Agent {
 		subscribe();
 		addBehaviour(new RequestAppointment(this));
 		addBehaviour(new FindAppointmentOwner(this));
+		addBehaviour(new ProposeSwap(this));
+		addBehaviour(new RespondToProposal1(this));
+		
 	}
 	
 	public void excludeSlotAndSetNextSlot(){
 		// TODO: Code that will improve the hig
 	}
 	
-	public int preferedAppointmentPriority(){
+	public int getPriorityOfTimeSlot(int timeSlot){
+		int priority = -1;
+		
+		for (int j = 0; j < preferences.keySet().size(); j++){
+			if (preferences.get(j).contains(timeSlot))
+				priority = j;
+		}
+		
+		return priority;
+	}
+	
+	public Integer getCurrentPriority(){
+		return this.getPriorityOfTimeSlot(this.allocatedAppointment);
+	}
+	
+	public Integer preferedAppointmentPriority(){
 		
 		for (Integer i : preferences.keySet()){
 			HashSet<Integer> prefs = preferences.get(i);
@@ -67,7 +85,7 @@ public class PatientAgent extends Agent {
 			}
 		}
 		
-		return -1;
+		return Integer.MAX_VALUE;
 		
 	}
 	

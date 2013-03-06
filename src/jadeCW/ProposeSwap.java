@@ -15,6 +15,7 @@ public class ProposeSwap extends Behaviour {
 	MessageTemplate reqTemplate;
 	
 	public ProposeSwap(PatientAgent patientAgent) {
+		super(patientAgent);
 		this.patientAgent = patientAgent;
 		step = 0;
 	}
@@ -27,7 +28,7 @@ public class ProposeSwap extends Behaviour {
 			break;
 		case 1:
 			try {
-				recieveSwapAppointmentRequest();
+				recieveSwapAppointmentReply();
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -44,7 +45,7 @@ public class ProposeSwap extends Behaviour {
 	}
 	
 	
-	public void recieveSwapAppointmentRequest() throws UnreadableException, IOException{
+	public void recieveSwapAppointmentReply() throws UnreadableException, IOException{
 		
 		ACLMessage reply = patientAgent.receive(reqTemplate);
 
@@ -53,11 +54,15 @@ public class ProposeSwap extends Behaviour {
 				System.err.println("Message template doesn't match!");
 			} else {
 				if (reply.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
-					sendHospitalRequest(reply.getSender());
-					step = 2;
+					informHospital(reply.getSender());
+					patientAgent.allocatedAppointment = Integer.getInteger(reply.getContent());
+					patientAgent.highPriorityAppointmentOwner = null;
+					step = 0;
 				}
 				else {
 					patientAgent.excludeSlotAndSetNextSlot();
+					patientAgent.excluded.add(Integer.valueOf(reply.getContent()));
+					patientAgent.highPriorityAppointmentOwner = null;
 					step = 0;
 				}
 			}
@@ -66,7 +71,7 @@ public class ProposeSwap extends Behaviour {
 		}
 	}
 	
-	private void sendHospitalRequest(AID swapPatientAgentAID) throws IOException{
+	private void informHospital(AID swapPatientAgentAID) throws IOException{
 		String conversationId = "request-swap-to-hospital";
 		ACLMessage request = new ACLMessage(ACLMessage.INFORM);
 		request.addReceiver(patientAgent.allocationAgent);
@@ -81,10 +86,9 @@ public class ProposeSwap extends Behaviour {
 		if (patientAgent.highPriorityAppointmentOwner != null){
 			
 			String conversationId = "request-swap";
-
-			ACLMessage request = new ACLMessage(ACLMessage.QUERY_IF);
+			ACLMessage request = new ACLMessage(ACLMessage.PROPOSE);
 			request.addReceiver(patientAgent.highPriorityAppointmentOwner);
-
+			request.setContent(Integer.toString(patientAgent.allocatedAppointment));
 			request.setSender(patientAgent.getAID());
 			request.setConversationId(conversationId);
 			request.setReplyWith(conversationId + " " + System.currentTimeMillis());
