@@ -24,6 +24,10 @@ public class PatientAgent extends Agent {
 	public boolean hasAppointment = false;
 	public int allocatedAppointment = -2;
 	public AID allocationAgent = null;
+	
+	public AID highPriorityAppointmentOwner = null;
+	
+	public HashSet<Integer> excluded = new HashSet<Integer>();
 
 	public void setup(){
 
@@ -49,18 +53,17 @@ public class PatientAgent extends Agent {
 	}
 	
 	
-	public boolean hasPreferedAppointment(){
+	public int preferedAppointmentPriority(){
 		
 		for (Integer i : preferences.keySet()){
 			HashSet<Integer> prefs = preferences.get(i);
 			for (Integer k : prefs){
 				if (k.equals(allocatedAppointment))
-					return true;
+					return i;
 			}
-			
 		}
 		
-		return false;
+		return -1;
 		
 	}
 	
