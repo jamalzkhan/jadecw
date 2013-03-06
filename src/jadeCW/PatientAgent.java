@@ -48,6 +48,22 @@ public class PatientAgent extends Agent {
 		addBehaviour(new RequestAppointment(this));
 	}
 	
+	
+	public boolean hasPreferedAppointment(){
+		
+		for (Integer i : preferences.keySet()){
+			HashSet<Integer> prefs = preferences.get(i);
+			for (Integer k : prefs){
+				if (k.equals(allocatedAppointment))
+					return true;
+			}
+			
+		}
+		
+		return false;
+		
+	}
+	
 	private void subscribe() {
 		final String serviceType = "allocate-appointments"; 
 

@@ -11,7 +11,6 @@ import jade.lang.acl.MessageTemplate;
 public class AllocateAppointment extends CyclicBehaviour {
 
 	private HospitalAgent hospitalAgent;
-	private int step = 0;
 	
 	public AllocateAppointment(HospitalAgent hospitalAgent) {
 		super(hospitalAgent);
