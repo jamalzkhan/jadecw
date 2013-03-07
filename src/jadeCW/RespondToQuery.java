@@ -68,7 +68,7 @@ public class RespondToQuery extends CyclicBehaviour {
 			
 		}
 		else{
-			//block();
+			block();
 		}
 		
 	}

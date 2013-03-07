@@ -7,7 +7,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-public class RespondToProposal1 extends Behaviour {
+public class RespondToProposal1 extends CyclicBehaviour {
 
 	PatientAgent patientAgent;
 
@@ -38,7 +38,9 @@ public class RespondToProposal1 extends Behaviour {
 			else {
 				reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 				reply.setContent(Integer.toString(patientAgent.allocatedAppointment));
+
 				System.out.println(patientAgent.getName() + " woz allocated this before: " + patientAgent.allocatedAppointment);
+
 				patientAgent.allocatedAppointment = recievedTimeSlot;
 
 //				try {
@@ -64,12 +66,5 @@ public class RespondToProposal1 extends Behaviour {
 		request.setReplyWith(conversationId + " " + System.currentTimeMillis());
 		patientAgent.send(request);
 	}
-
-	@Override
-	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 
 }

@@ -122,14 +122,16 @@ public class FindAppointmentOwner extends Behaviour {
 			if (!reqTemplate.match(reply)) {
 				System.err.println("Message template doesn't match!");
 			} else {
-				if (reply.getPerformative() == ACLMessage.FAILURE)
+				if (reply.getPerformative() == ACLMessage.FAILURE) {
 					System.out.println(reply.getContent());
-				else {
+					step = 0;
+				} else {
 					AID resourceOwner = (AID) reply.getContentObject();
 					patientAgent.highPriorityAppointmentOwner = resourceOwner;
 					System.out.println("slot owned by " + resourceOwner.getName());
+					patientAgent.addBehaviour(new ProposeSwap(patientAgent));
+					step = 2;
 				}
-				step = 0;
 			}
 		} else {
 			block();

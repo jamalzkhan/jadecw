@@ -65,9 +65,11 @@ public class RequestAppointment extends Behaviour {
 			} else if (reply.getPerformative() == ACLMessage.AGREE) {
 				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
 				patientAgent.hasAppointment = true;
-				step = 0;
+				patientAgent.addBehaviour(new FindAppointmentOwner(patientAgent));
+				step = 2;
 			} else if (reply.getPerformative() == ACLMessage.REFUSE) {
 				patientAgent.allocatedAppointment = -1;	
+				step = 0;
 			}
 		} else {
 			block();
