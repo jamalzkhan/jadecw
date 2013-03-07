@@ -55,12 +55,23 @@ public class HospitalAgent extends Agent {
 
 	}
 	
+	public int getSlotForAID(AID slotOwner){
+		
+		for (int i = 0; i< appointments.length; i++){
+			if (appointments[i] == slotOwner)
+				return i;
+		}
+		return -1;
+		
+	}
+	
 	public void takeDown(){
 		for (int i = 0; i<appointments.length; i++){
+			int j = i+1;
 			if (appointments[i] != null)
-				System.out.println(this.getName() + ": Appointment " + i + ": " + appointments[i].getName());
+				System.out.println(this.getName() + ": Appointment " + j + ": " + appointments[i].getName());
 			else
-				System.out.println(this.getName() + ": Appointment " + i + ": " + " is null");
+				System.out.println(this.getName() + ": Appointment " + j + ": " + " is null");
 		}
 	}
 

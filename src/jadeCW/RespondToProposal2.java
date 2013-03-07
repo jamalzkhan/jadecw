@@ -43,8 +43,18 @@ public class RespondToProposal2 extends CyclicBehaviour {
 			
 			if (this.hospitalAgent.appointments[recivedSwapInfo.swapSlot] == null){
 				reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+				
+				int agentSlot = hospitalAgent.getSlotForAID(propsal.getSender());
+//				if (agentSlot != -1){
+//					hospitalAgent.appointments[agentSlot] = null;
+//				}
+				
 				hospitalAgent.appointments[recivedSwapInfo.swapSlot] = propsal.getSender();
+				
+				// Check if there is another assignment going on and remove it to this new one
 				hospitalAgent.appointments[recivedSwapInfo.currentSlot] = null;
+				
+				
 				System.out.println("Hospital agreed to swap");
 			}
 			else {

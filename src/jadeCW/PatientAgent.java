@@ -44,21 +44,16 @@ public class PatientAgent extends Agent {
 					preferences.put(count, new HashSet<Integer>());
 				}
 				else
-					preferences.get(count).add(Integer.parseInt((String) args[i]));
+					preferences.get(count).add(Integer.parseInt((String) args[i])-1);
 			}
 
 		}
 
 		subscribe();
 		addBehaviour(new RequestAppointment(this));
-		//addBehaviour(new FindAppointmentOwner(this));
-		//addBehaviour(new ProposeSwap(this));
 		addBehaviour(new RespondToProposal1(this));
+		//addBehaviour(new ConfirmSlot(this));
 		
-	}
-	
-	public void excludeSlotAndSetNextSlot(){
-		// TODO: Code that will improve the hig
 	}
 	
 	public int getPriorityOfTimeSlot(int timeSlot){
@@ -133,7 +128,8 @@ public class PatientAgent extends Agent {
 	}
 
 	public void takeDown(){
-		System.out.println(this.getName() + ": Appointment " + this.allocatedAppointment);
+		
+		System.out.println(this.getName() + ": Appointment " + (this.allocatedAppointment+1));
 	}
 
 

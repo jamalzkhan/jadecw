@@ -13,13 +13,13 @@ public class ProposeSwap extends Behaviour {
 	PatientAgent patientAgent;
 	private int step;
 	MessageTemplate reqTemplate;
-	private int swapSlot;
+	//private int swapSlot;
 	
 	public ProposeSwap(PatientAgent patientAgent) {
 		super(patientAgent);
 		this.patientAgent = patientAgent;
 		step = 0;
-		this.swapSlot = -1;
+		//this.swapSlot = -1;
 	}
 	
 	@Override
@@ -48,21 +48,18 @@ public class ProposeSwap extends Behaviour {
 	
 	
 	public void recieveSwapAppointmentReply() throws UnreadableException, IOException{
-
-		MessageTemplate tempTemplate = MessageTemplate.MatchConversationId("request-swap");
+		String conversationId = "request-swap";
 		
-		ACLMessage reply = patientAgent.receive(tempTemplate);
+		ACLMessage reply = patientAgent.blockingReceive(reqTemplate);
 
 		if (reply != null) {
 			
-			System.out.println("Swapping response received");
 			SwapInfo recievedSwapInfo = (SwapInfo) reply.getContentObject();
 			if (reply.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
-				System.out.println("Accepted proposal");
-				
+				System.out.println(patientAgent.getName() + " proposal was accepted");				
 				informHospital(reply.getSender(), patientAgent.allocatedAppointment, recievedSwapInfo.currentSlot);
 				
-				System.out.println(patientAgent.getName() + " woz allocated this before: " + patientAgent.allocatedAppointment);
+				System.out.println(patientAgent.getName() + " was allocated this before: " + patientAgent.allocatedAppointment + " and now has " + recievedSwapInfo.getCurrentSlot());
 				
 				patientAgent.allocatedAppointment = recievedSwapInfo.currentSlot;//Integer.parseInt(reply.getContent());
 				patientAgent.highPriorityAppointmentOwner = null;
@@ -70,8 +67,7 @@ public class ProposeSwap extends Behaviour {
 				step = 2;
 			}
 			else {
-				System.out.println("Rejected proposal");
-				patientAgent.excludeSlotAndSetNextSlot();
+				System.out.println(patientAgent.getName() + " proposal was rejected");				
 				patientAgent.excluded.add(recievedSwapInfo.currentSlot);
 				patientAgent.highPriorityAppointmentOwner = null;
 				step = 2;
@@ -97,11 +93,12 @@ public class ProposeSwap extends Behaviour {
 	}
 	
 	public void requestSwapAppointments(){
+		String conversationId = "request-swap";
 
 		if (patientAgent.highPriorityAppointmentOwner != null){
 			
-			System.out.println("Proposing to swap");
-			String conversationId = "request-swap";
+			System.out.println(patientAgent.getName() + " proposing to swap slot" 
+			+ patientAgent.allocatedAppointment + " with " + patientAgent.swapSlot);
 			ACLMessage request = new ACLMessage(ACLMessage.PROPOSE);
 			request.addReceiver(patientAgent.highPriorityAppointmentOwner);
 			//request.setContent(Integer.toString(patientAgent.allocatedAppointment));

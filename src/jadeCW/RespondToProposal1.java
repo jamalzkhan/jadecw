@@ -27,7 +27,7 @@ public class RespondToProposal1 extends CyclicBehaviour {
 		ACLMessage propsal = patientAgent.receive(reqTemplate);
 
 		if (propsal != null){
-			System.out.println("Recieved proposal properly");
+			System.out.println(patientAgent.getName() + " recieved proposal from " + propsal.getSender().getName());
 
 			SwapInfo recivedSwapInfo = null;
 			try {
@@ -35,6 +35,9 @@ public class RespondToProposal1 extends CyclicBehaviour {
 			} catch (UnreadableException e1) {
 				e1.printStackTrace();
 			}
+			
+			// add check if the receivedSwapInfo.swap doesn't match the patientAgent.allocated - EXIT THIS
+
 			
 			ACLMessage reply = propsal.createReply();
 			try {
@@ -47,11 +50,18 @@ public class RespondToProposal1 extends CyclicBehaviour {
 			if (patientAgent.getCurrentPriority() < 
 					patientAgent.getPriorityOfTimeSlot(recivedSwapInfo.currentSlot)) {
 				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
-				reply.setContent(Integer.toString(recivedSwapInfo.currentSlot));;;;;;;;;;;
+				//reply.setContent(Integer.toString(recivedSwapInfo.swapSlot));
+			} else if (recivedSwapInfo.swapSlot != patientAgent.allocatedAppointment) {
+				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+				System.out.println("new check");
+			}
+			else if (propsal.getSender() == patientAgent.getAID()){
+				System.out.println("asking myself");
+				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 			}
 			else {
 				reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-				System.out.println(patientAgent.getName() + " woz allocated this before: " + patientAgent.allocatedAppointment);
+				System.out.println(patientAgent.getName() + " was allocated this before: " + patientAgent.allocatedAppointment + " and now has " + recivedSwapInfo.getCurrentSlot());
 
 				try {
 					informHospital(propsal.getSender(), patientAgent.allocatedAppointment, recivedSwapInfo.currentSlot);
