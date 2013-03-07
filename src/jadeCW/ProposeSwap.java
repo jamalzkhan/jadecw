@@ -50,18 +50,22 @@ public class ProposeSwap extends Behaviour {
 		ACLMessage reply = patientAgent.receive(reqTemplate);
 
 		if (reply != null) {
+			
+			System.out.println("Swapping response received");
+						
 			if (reply.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
-				informHospital(reply.getSender());
+				//informHospital(reply.getSender());
 				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
 				patientAgent.highPriorityAppointmentOwner = null;
-				step = 0;
+				step = 2;
 			}
 			else {
 				patientAgent.excludeSlotAndSetNextSlot();
 				patientAgent.excluded.add(Integer.valueOf(reply.getContent()));
 				patientAgent.highPriorityAppointmentOwner = null;
-				step = 0;
+				step = 2;
 			}
+			patientAgent.addBehaviour(new FindAppointmentOwner(patientAgent));
 		} else {
 			block();
 		}

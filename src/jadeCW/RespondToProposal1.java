@@ -3,10 +3,11 @@ package jadeCW;
 import java.io.IOException;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-public class RespondToProposal1 extends Behaviour {
+public class RespondToProposal1 extends CyclicBehaviour {
 
 	PatientAgent patientAgent;
 
@@ -36,6 +37,7 @@ public class RespondToProposal1 extends Behaviour {
 			}
 			else {
 				reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+				reply.setContent(Integer.toString(patientAgent.allocatedAppointment));
 				patientAgent.allocatedAppointment = recievedTimeSlot;
 
 				try {
@@ -60,11 +62,6 @@ public class RespondToProposal1 extends Behaviour {
 		request.setConversationId(conversationId);
 		request.setReplyWith(conversationId + " " + System.currentTimeMillis());
 		patientAgent.send(request);
-	}
-
-	@Override
-	public boolean done() {
-		return false;
 	}
 
 }
