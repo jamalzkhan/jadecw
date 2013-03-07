@@ -36,11 +36,12 @@ public class RespondToQuery extends CyclicBehaviour {
 			Integer requestedSlot = Integer.parseInt(request.getContent());
 			ACLMessage reply = request.createReply();
 			
-			if (requestedSlot > hospitalAgent.getAppointments().length) {
+			if (requestedSlot >= hospitalAgent.getAppointments().length) {
 				/*
 				 * Slot does not exist, should not come into this case!
 				 */
 				reply.setPerformative(ACLMessage.FAILURE);
+				System.out.println("Trying to get slot that doesn't exist");
 				reply.setContent("Slot not existent");
 				
 			} else {
