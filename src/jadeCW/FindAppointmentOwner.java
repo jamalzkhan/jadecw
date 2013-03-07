@@ -87,7 +87,7 @@ public class FindAppointmentOwner extends Behaviour {
 		// If all have been checked then we empty the excluded set and regenerate it with an empty set
 		if (nextSlot == null){
 			checkedCount++;
-
+			
 			if (checkedCount == 3){
 				step = 2;
 				return;

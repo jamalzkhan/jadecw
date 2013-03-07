@@ -46,17 +46,22 @@ public class ProposeSwap extends Behaviour {
 	
 	
 	public void recieveSwapAppointmentReply() throws UnreadableException, IOException{
+
+		MessageTemplate tempTemplate = MessageTemplate.MatchConversationId("request-swap");
 		
-		ACLMessage reply = patientAgent.receive(reqTemplate);
+		ACLMessage reply = patientAgent.receive(tempTemplate);
 
 		if (reply != null) {
 			if (reply.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
+				System.out.println("Accepted proposal");
 				informHospital(reply.getSender());
+				System.out.println(patientAgent.getName() + " woz allocated this before: " + patientAgent.allocatedAppointment);
 				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
 				patientAgent.highPriorityAppointmentOwner = null;
 				step = 0;
 			}
 			else {
+				System.out.println("Rejected proposal");
 				patientAgent.excludeSlotAndSetNextSlot();
 				patientAgent.excluded.add(Integer.valueOf(reply.getContent()));
 				patientAgent.highPriorityAppointmentOwner = null;

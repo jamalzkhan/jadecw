@@ -68,7 +68,7 @@ public class PatientAgent extends Agent {
 				priority = j;
 		}
 		
-		return priority;
+		return Integer.MAX_VALUE;
 	}
 	
 	public Integer getCurrentPriority(){
