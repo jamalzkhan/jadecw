@@ -2,7 +2,6 @@ package jadeCW;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
@@ -18,8 +17,6 @@ public class FindAppointmentOwner extends Behaviour {
 	private int assignedPriority;
 	private int checkedCount;
 	private MessageTemplate reqTemplate;
-
-
 
 	public FindAppointmentOwner(PatientAgent patientAgent){
 		super(patientAgent);
@@ -120,7 +117,7 @@ public class FindAppointmentOwner extends Behaviour {
 
 	public void getPreferredAppointmentConfirmation() throws UnreadableException{
 		ACLMessage reply = patientAgent.receive(reqTemplate);
-
+		
 		if (reply != null) {
 			if (!reqTemplate.match(reply)) {
 				System.err.println("Message template doesn't match!");
@@ -138,7 +135,6 @@ public class FindAppointmentOwner extends Behaviour {
 			block();
 		}
 	}
-
 
 	@Override
 	public boolean done() {

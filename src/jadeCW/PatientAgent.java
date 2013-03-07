@@ -85,7 +85,7 @@ public class PatientAgent extends Agent {
 			}
 		}
 		
-		return Integer.MAX_VALUE;
+		return -1;
 		
 	}
 	

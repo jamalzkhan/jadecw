@@ -52,7 +52,7 @@ public class ProposeSwap extends Behaviour {
 		if (reply != null) {
 			if (reply.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
 				informHospital(reply.getSender());
-				patientAgent.allocatedAppointment = Integer.getInteger(reply.getContent());
+				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
 				patientAgent.highPriorityAppointmentOwner = null;
 				step = 0;
 			}
