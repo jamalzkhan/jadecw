@@ -57,6 +57,7 @@ public class FindAppointmentOwner extends Behaviour {
 		if (patientAgent.allocatedAppointment == -2)
 			return;
 		
+		
 		this.assignedPriority = patientAgent.preferedAppointmentPriority();
 
 		if (assignedPriority == -1)
@@ -104,7 +105,7 @@ public class FindAppointmentOwner extends Behaviour {
 		request.addReceiver(patientAgent.allocationAgent);
 		request.setContent(nextSlot.toString());
 		System.out.println(patientAgent.getName() + " requesting slot " + nextSlot.toString());
-
+		patientAgent.swapSlot = nextSlot;
 		request.setSender(patientAgent.getAID());
 		request.setConversationId(conversationId);
 		request.setReplyWith(conversationId + " " + System.currentTimeMillis());

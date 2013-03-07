@@ -6,6 +6,7 @@ import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 public class RespondToProposal1 extends CyclicBehaviour {
 
@@ -28,26 +29,37 @@ public class RespondToProposal1 extends CyclicBehaviour {
 		if (propsal != null){
 			System.out.println("Recieved proposal properly");
 
-			int recievedTimeSlot = Integer.valueOf(propsal.getContent());
+			SwapInfo recivedSwapInfo = null;
+			try {
+				recivedSwapInfo = (SwapInfo) propsal.getContentObject();
+			} catch (UnreadableException e1) {
+				e1.printStackTrace();
+			}
+			
 			ACLMessage reply = propsal.createReply();
+			try {
+				reply.setContentObject(new SwapInfo(patientAgent.allocatedAppointment, recivedSwapInfo.currentSlot));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//reply.setContent(Integer.toString(patientAgent.allocatedAppointment));
 
 			if (patientAgent.getCurrentPriority() < 
-					patientAgent.getPriorityOfTimeSlot(recievedTimeSlot)) {
+					patientAgent.getPriorityOfTimeSlot(recivedSwapInfo.currentSlot)) {
 				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+				reply.setContent(Integer.toString(recivedSwapInfo.currentSlot));;;;;;;;;;;
 			}
 			else {
 				reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-				reply.setContent(Integer.toString(patientAgent.allocatedAppointment));
-
 				System.out.println(patientAgent.getName() + " woz allocated this before: " + patientAgent.allocatedAppointment);
 
-				patientAgent.allocatedAppointment = recievedTimeSlot;
-
-//				try {
-//					informHospital(propsal.getSender());
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
+				try {
+					informHospital(propsal.getSender(), patientAgent.allocatedAppointment, recivedSwapInfo.currentSlot);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				patientAgent.allocatedAppointment = recivedSwapInfo.currentSlot;
 			}
 			patientAgent.send(reply);
 		}
@@ -56,12 +68,12 @@ public class RespondToProposal1 extends CyclicBehaviour {
 		}	
 	}
 
-	private void informHospital(AID swapPatientAgentAID) throws IOException{
-		String conversationId = "request-swap-to-hospital";
+	private void informHospital(AID swapPatientAgentAID, int currentSlot, int swapSlot) throws IOException{
+		String conversationId = "inform-swap-to-hospital";
 		ACLMessage request = new ACLMessage(ACLMessage.INFORM);
 		request.addReceiver(patientAgent.allocationAgent);
 		request.setSender(patientAgent.getAID());
-		request.setContentObject(swapPatientAgentAID);
+		request.setContentObject(new SwapInfoForHospital(currentSlot, swapSlot, swapPatientAgentAID));
 		request.setConversationId(conversationId);
 		request.setReplyWith(conversationId + " " + System.currentTimeMillis());
 		patientAgent.send(request);

@@ -1,7 +1,5 @@
 package jadeCW;
 
-
-
 import jade.core.Agent;
 import jade.core.AID;
 import jade.domain.DFService;
@@ -52,6 +50,8 @@ public class HospitalAgent extends Agent {
 
 		addBehaviour(new AllocateAppointment(this));
 		addBehaviour(new RespondToQuery(this));
+		addBehaviour(new RespondToProposal2(this));
+		addBehaviour(new UpdateAppointments(this));
 
 	}
 	
@@ -59,6 +59,8 @@ public class HospitalAgent extends Agent {
 		for (int i = 0; i<appointments.length; i++){
 			if (appointments[i] != null)
 				System.out.println(this.getName() + ": Appointment " + i + ": " + appointments[i].getName());
+			else
+				System.out.println(this.getName() + ": Appointment " + i + ": " + " is null");
 		}
 	}
 

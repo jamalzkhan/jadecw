@@ -28,6 +28,7 @@ public class PatientAgent extends Agent {
 	public AID highPriorityAppointmentOwner = null;
 	
 	public HashSet<Integer> excluded = new HashSet<Integer>();
+	public int swapSlot = -1;
 
 	public void setup(){
 

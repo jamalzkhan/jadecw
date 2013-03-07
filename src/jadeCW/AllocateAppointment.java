@@ -43,7 +43,6 @@ public class AllocateAppointment extends CyclicBehaviour {
 		else{
 			block();
 		}
-		
 	}
 	
 	public int allocateAppointment(HashMap<Integer, HashSet<Integer>> preferences, AID agent){
