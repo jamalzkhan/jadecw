@@ -11,6 +11,13 @@ import jade.lang.acl.UnreadableException;
 public class RespondToProposal1 extends CyclicBehaviour {
 
 	PatientAgent patientAgent;
+	
+	/*
+	 * Checks if the slot recieved has a better preference or similar one and then sends a message
+	 * to swap, or it sends a rejection to the proposal made.
+	 * 
+	 * Also sends a message to the hospital to confirm the swap change.
+	 */
 
 	public RespondToProposal1(PatientAgent patientAgent) {
 		super(patientAgent);
@@ -50,18 +57,17 @@ public class RespondToProposal1 extends CyclicBehaviour {
 			if (patientAgent.getCurrentPriority() < 
 					patientAgent.getPriorityOfTimeSlot(recivedSwapInfo.currentSlot)) {
 				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
-				//reply.setContent(Integer.toString(recivedSwapInfo.swapSlot));
 			} else if (recivedSwapInfo.swapSlot != patientAgent.allocatedAppointment) {
 				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
-				System.out.println("new check");
+				System.out.println("Check if there has recently been a swap!");
 			}
 			else if (propsal.getSender() == patientAgent.getAID()){
-				System.out.println("asking myself");
+				System.out.println("I am asking myself to swap!");
 				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 			}
 			else {
 				reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-				System.out.println(patientAgent.getName() + " was allocated this before: " + patientAgent.allocatedAppointment + " and now has " + recivedSwapInfo.getCurrentSlot());
+				System.out.println(patientAgent.getName() + " was allocated this before: " + (patientAgent.allocatedAppointment+1) + " and now has " + (recivedSwapInfo.getCurrentSlot()+1));
 
 				try {
 					informHospital(propsal.getSender(), patientAgent.allocatedAppointment, recivedSwapInfo.currentSlot);
@@ -86,6 +92,7 @@ public class RespondToProposal1 extends CyclicBehaviour {
 		request.setContentObject(new SwapInfoForHospital(currentSlot, swapSlot, swapPatientAgentAID));
 		request.setConversationId(conversationId);
 		request.setReplyWith(conversationId + " " + System.currentTimeMillis());
+		System.out.println(patientAgent.getAID().getName() + " sending confirmation to hospital");
 		patientAgent.send(request);
 	}
 

@@ -10,18 +10,24 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 public class HospitalAgent extends Agent {
 
-	public int totalAppointments;
-	public AID[] appointments;
+	/*
+	 * Total number of appointments
+	 */
+	private int totalAppointments;
 	
-
+	/*
+	 * Array that keeps track of agents who own appointment slots - by index
+	 */
+	private AID[] appointments;
+	
 	public void setup(){
-
+		
+		// Parsing the total number of appointments
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
 			totalAppointments = Integer.parseInt((String) args[0]);
 			appointments = new AID[totalAppointments];
 		}
-
 
 		String serviceName = "appointment-allocator";
 		String serviceType = "allocate-appointments";
@@ -35,11 +41,7 @@ public class HospitalAgent extends Agent {
 			ServiceDescription sd = new ServiceDescription();
 			sd.setName(serviceName);
 			sd.setType(serviceType);
-			// Agents that want to use this service need to "know" the weather-forecast-ontology
-			//sd.addOntologies("weather-forecast-ontology");
-			// Agents that want to use this service need to "speak" the FIPA-SL language
 			sd.addLanguages(FIPANames.ContentLanguage.FIPA_SL);
-			//sd.addProperties(new Property("country", "Italy"));
 			dfd.addServices(sd);
 
 			DFService.register(this, dfd);
@@ -48,6 +50,10 @@ public class HospitalAgent extends Agent {
 			fe.printStackTrace();
 		}
 
+		/*
+		 * Adding all the behaviours that are cyclic
+		 */
+		
 		addBehaviour(new AllocateAppointment(this));
 		addBehaviour(new RespondToQuery(this));
 		addBehaviour(new RespondToProposal2(this));
@@ -55,6 +61,9 @@ public class HospitalAgent extends Agent {
 
 	}
 	
+	/*
+	 * Returns the slot owner in the appointments structure
+	 */
 	public int getSlotForAID(AID slotOwner){
 		
 		for (int i = 0; i< appointments.length; i++){
@@ -63,6 +72,14 @@ public class HospitalAgent extends Agent {
 		}
 		return -1;
 		
+	}
+	
+	public int getTotalAppointments() {
+		return totalAppointments;
+	}
+	
+	public AID[] getAppointments() {
+		return appointments;
 	}
 	
 	public void takeDown(){

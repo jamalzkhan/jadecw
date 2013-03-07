@@ -14,6 +14,12 @@ public class UpdateAppointments extends CyclicBehaviour {
 
 	public HospitalAgent hospitalAgent;
 	HashMap<AID, LinkedList<SwapInfoForHospital>> swapStatus;
+	
+	/*
+	 * Ensures that both agents agree that a swap took place before 
+	 * updating the appointments structure.
+	 * 
+	 */
 
 	public UpdateAppointments(HospitalAgent hospitalAgent) {
 		super(hospitalAgent);
@@ -46,12 +52,13 @@ public class UpdateAppointments extends CyclicBehaviour {
 					if (s.currentSlot == recievedSwapInfoForHospital.getSwapSlot() &&
 							s.swapSlot == recievedSwapInfoForHospital.getCurrentSlot()) {
 						
-						hospitalAgent.appointments[recievedSwapInfoForHospital.getSwapSlot()] = propsal.getSender();
-						hospitalAgent.appointments[recievedSwapInfoForHospital.getCurrentSlot()] = recievedSwapInfoForHospital.getSwapWith();
+						hospitalAgent.getAppointments()[recievedSwapInfoForHospital.getSwapSlot()] = propsal.getSender();
+						hospitalAgent.getAppointments()[recievedSwapInfoForHospital.getCurrentSlot()] = recievedSwapInfoForHospital.getSwapWith();
 						
 						//swapStatus.remove(recievedSwapInfoForHospital.getSwapWith());
 						swapStatus.get(recievedSwapInfoForHospital.swapWith).remove(s);
-						System.out.println("Hospital has verified the swap and updated itself.");
+						System.out.println("Hospital has verified the swap between " + sender.getName() + 
+								" and " + recievedSwapInfoForHospital.swapWith.getName());
 						return;
 					} 
 				}
@@ -59,7 +66,7 @@ public class UpdateAppointments extends CyclicBehaviour {
 				if (! swapStatus.containsKey(propsal.getSender()))
 					swapStatus.put(propsal.getSender(), new LinkedList<SwapInfoForHospital>());
 				swapStatus.get(propsal.getSender()).add(recievedSwapInfoForHospital);
-								
+
 			}
 			else {
 				swapStatus.put(propsal.getSender(), new LinkedList<SwapInfoForHospital>());

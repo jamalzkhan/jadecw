@@ -11,6 +11,12 @@ public class RespondToProposal2 extends CyclicBehaviour {
 	
 	public HospitalAgent hospitalAgent;
 	
+	/*
+	 * Checks if the slot recieved is non existant in the appointment structure,
+	 * swaps if it is, otherwise sends a rejection message
+	 * 
+	 */
+	
 	public RespondToProposal2(HospitalAgent hospitalAgent) {
 		super();
 		this.hospitalAgent = hospitalAgent;
@@ -25,7 +31,7 @@ public class RespondToProposal2 extends CyclicBehaviour {
 		ACLMessage propsal = hospitalAgent.receive(reqTemplate);
 		
 		if (propsal != null){
-			System.out.println("Hospital recieved proposal properly for " + propsal.getContent());
+			
 
 			SwapInfo recivedSwapInfo = null;
 			try {
@@ -33,6 +39,7 @@ public class RespondToProposal2 extends CyclicBehaviour {
 			} catch (UnreadableException e1) {
 				e1.printStackTrace();
 			}
+			System.out.println(hospitalAgent.getName() + " recieved proposal for " + recivedSwapInfo.swapSlot);
 			
 			ACLMessage reply = propsal.createReply();
 			try {
@@ -41,27 +48,23 @@ public class RespondToProposal2 extends CyclicBehaviour {
 				e.printStackTrace();
 			}
 			
-			if (this.hospitalAgent.appointments[recivedSwapInfo.swapSlot] == null){
+			if (this.hospitalAgent.getAppointments()[recivedSwapInfo.swapSlot] == null){
 				reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 				
 				int agentSlot = hospitalAgent.getSlotForAID(propsal.getSender());
-//				if (agentSlot != -1){
-//					hospitalAgent.appointments[agentSlot] = null;
-//				}
 				
-				hospitalAgent.appointments[recivedSwapInfo.swapSlot] = propsal.getSender();
+				hospitalAgent.getAppointments()[recivedSwapInfo.swapSlot] = propsal.getSender();
 				
 				// Check if there is another assignment going on and remove it to this new one
-				hospitalAgent.appointments[recivedSwapInfo.currentSlot] = null;
+				hospitalAgent.getAppointments()[recivedSwapInfo.currentSlot] = null;
 				
-				
-				System.out.println("Hospital agreed to swap");
+				System.out.println(hospitalAgent.getName() + " agreed to swap and updated");
 			}
 			else {
 				reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 				System.out.println("Hospital rejected swap");
 			}
-
+			reply.setSender(hospitalAgent.getAID());
 			hospitalAgent.send(reply);
 		}
 		else{

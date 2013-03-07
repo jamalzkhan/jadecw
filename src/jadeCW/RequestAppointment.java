@@ -8,9 +8,17 @@ import jade.lang.acl.MessageTemplate;
 
 public class RequestAppointment extends Behaviour {
 	
-	private int step = 0;
+	private int state = 0;
 	private PatientAgent patientAgent;
 	private MessageTemplate reqTemplate;
+	
+	/*
+	 * The behaviour has different states:
+	 *  - State 0: Sending the request for the appointment
+	 *  - State 1: Waiting for the reply from the appointment owner
+	 *  - State 2: Behaviour is finished
+	 *  
+	 */
 	
 	public RequestAppointment(PatientAgent agent) {
 		super(agent);
@@ -19,7 +27,7 @@ public class RequestAppointment extends Behaviour {
 
 	@Override
 	public void action() {
-		switch (step) {
+		switch (state) {
 			case 0:
 				sendRequest();
 				break;
@@ -36,7 +44,6 @@ public class RequestAppointment extends Behaviour {
 
 	private void sendRequest() {
 		if (patientAgent.allocationAgent != null) {
-//			System.out.println("performing first action on agent " + patientAgent.getName());
 			if (!patientAgent.hasAppointment) {
 				ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 				request.addReceiver(patientAgent.allocationAgent);
@@ -51,7 +58,7 @@ public class RequestAppointment extends Behaviour {
 				patientAgent.send(request);
 				reqTemplate = MessageTemplate.and(MessageTemplate.MatchConversationId("allocate-appointments"),
 						MessageTemplate.MatchInReplyTo(request.getReplyWith())); 
-				step = 1;
+				state = 1;
 			}
 		}
 	}
@@ -66,11 +73,12 @@ public class RequestAppointment extends Behaviour {
 				patientAgent.allocatedAppointment = Integer.parseInt(reply.getContent());
 				patientAgent.hasAppointment = true;
 				patientAgent.addBehaviour(new FindAppointmentOwner(patientAgent));
-				step = 2;
+				state = 2;
 			} else if (reply.getPerformative() == ACLMessage.REFUSE) {
 				patientAgent.allocatedAppointment = -1;	
-				step = 0;
+				state = 0;
 			}
+			
 		} else {
 			block();
 		}

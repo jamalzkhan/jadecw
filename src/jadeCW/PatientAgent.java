@@ -16,19 +16,21 @@ import jade.util.leap.Iterator;
 
 public class PatientAgent extends Agent {
 
-	public HashMap<Integer, HashSet<Integer>> preferences 
-	= new HashMap<Integer, HashSet<Integer>>();
-
+	public HashMap<Integer, HashSet<Integer>> preferences = new HashMap<Integer, HashSet<Integer>>();
 	public HashSet<DFAgentDescription> agentDescriptions = new HashSet<DFAgentDescription>();
-
 	public boolean hasAppointment = false;
 	public int allocatedAppointment = -2;
 	public AID allocationAgent = null;
-	
-	public AID highPriorityAppointmentOwner = null;
-	
 	public HashSet<Integer> excluded = new HashSet<Integer>();
+	public int swappingAttempts = 0;
+	
+	/*
+	 * swapSlot is used to keep track of the slot that will be swapped
+	 * highPriorityAppointmentOwner is used to keep track of the
+	 * agent that owns a higher priority appointment
+	 */
 	public int swapSlot = -1;
+	public AID highPriorityAppointmentOwner = null;
 
 	public void setup(){
 
@@ -44,7 +46,7 @@ public class PatientAgent extends Agent {
 					preferences.put(count, new HashSet<Integer>());
 				}
 				else
-					preferences.get(count).add(Integer.parseInt((String) args[i])-1);
+					preferences.get(count).add(-1+Integer.parseInt((String) args[i]));
 			}
 
 		}
@@ -52,7 +54,6 @@ public class PatientAgent extends Agent {
 		subscribe();
 		addBehaviour(new RequestAppointment(this));
 		addBehaviour(new RespondToProposal1(this));
-		//addBehaviour(new ConfirmSlot(this));
 		
 	}
 	
@@ -61,7 +62,7 @@ public class PatientAgent extends Agent {
 		
 		for (int j = 0; j < preferences.keySet().size(); j++){
 			if (preferences.get(j).contains(timeSlot))
-				priority = j;
+				return j;
 		}
 		
 		return Integer.MAX_VALUE;
@@ -70,7 +71,10 @@ public class PatientAgent extends Agent {
 	public Integer getCurrentPriority(){
 		return this.getPriorityOfTimeSlot(this.allocatedAppointment);
 	}
-	
+	/*
+	 * Gets the next best preferred appointment priority
+	 * Returns -1 if there is no priority
+	 */
 	public Integer preferedAppointmentPriority(){
 		
 		for (Integer i : preferences.keySet()){
@@ -95,8 +99,6 @@ public class PatientAgent extends Agent {
 		template.addServices(templateSd);
 
 		SearchConstraints sc = new SearchConstraints();
-		// We want to receive 10 results at most
-		//sc.setMaxResults(new Long(10));
 
 		addBehaviour(new SubscriptionInitiator(this, DFService.createSubscriptionMessage(this, getDefaultDF(), template, sc)) {
 			protected void handleInform(ACLMessage inform) {
@@ -128,8 +130,10 @@ public class PatientAgent extends Agent {
 	}
 
 	public void takeDown(){
-		
-		System.out.println(this.getName() + ": Appointment " + (this.allocatedAppointment+1));
+		if (this.allocatedAppointment == -1)
+			System.out.println(this.getName() + ": No appointment given");
+		else 
+			System.out.println(this.getName() + ": Appointment " + (this.allocatedAppointment+1));
 	}
 
 

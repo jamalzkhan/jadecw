@@ -13,6 +13,10 @@ public class RespondToQuery extends CyclicBehaviour {
 
 	private HospitalAgent hospitalAgent;
 	
+	/*
+	 *  Gets a request for a slot and returns the owner of the slot
+	 */
+	
 	public RespondToQuery(HospitalAgent hospitalAgent) {
 		super(hospitalAgent);
 		this.hospitalAgent = hospitalAgent;
@@ -32,33 +36,34 @@ public class RespondToQuery extends CyclicBehaviour {
 			Integer requestedSlot = Integer.parseInt(request.getContent());
 			ACLMessage reply = request.createReply();
 			
-			if (requestedSlot > hospitalAgent.appointments.length) {
-				// fail: slot not existing
-				// send rejection
+			if (requestedSlot > hospitalAgent.getAppointments().length) {
+				/*
+				 * Slot does not exist, should not come into this case!
+				 */
 				reply.setPerformative(ACLMessage.FAILURE);
 				reply.setContent("Slot not existent");
 				
 			} else {
 
-				AID owner = hospitalAgent.appointments[requestedSlot];
+				AID owner = hospitalAgent.getAppointments()[requestedSlot];
 				reply.setPerformative(ACLMessage.INFORM);
 
 				if (owner == null) {
-					//slot free
-					//send that it's free
+					/*
+					 * Slot is not free, send the patient that owns it
+					 */
 					try {
 						reply.setContentObject(hospitalAgent.getAID());
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
-					//slot taken
-					//send name
+					/*
+					 * Slot is taken, send it's owner
+					 */
 					try {
 						reply.setContentObject(owner);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

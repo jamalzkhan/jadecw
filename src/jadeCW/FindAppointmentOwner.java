@@ -11,22 +11,31 @@ import jade.lang.acl.UnreadableException;
 
 public class FindAppointmentOwner extends Behaviour {
 
-	public int step = 0;
+	public int state = 0;
 	private PatientAgent patientAgent;
 	private HashMap<Integer, HashSet<Integer>> higherPriorities;
 	private int assignedPriority;
-	private int checkedCount;
 	private MessageTemplate reqTemplate;
+	
+	/*
+	 * Behaviour is used to find a patient with higher priority 
+	 * and request if it is willing to swap
+	 * 
+	 * We're using states again here:
+	 *  - State 0: Used to find a more preferred slot and send it's
+	 *  		owner a request
+	 *  - State 1: Receive a confirmation who owns this resource
+	 *  - State 2: Stop the behaviour
+	 */
 
 	public FindAppointmentOwner(PatientAgent patientAgent){
 		super(patientAgent);
 		this.patientAgent = patientAgent;
-		this.checkedCount = 0;
 	}
 
 	@Override
 	public void action() {
-		switch (step) {
+		switch (state) {
 		case 0:
 			requestPreferredAppointment();
 			break;
@@ -65,7 +74,7 @@ public class FindAppointmentOwner extends Behaviour {
 
 		//Highest priority reached!
 		if (assignedPriority == 0){
-			step = 2;
+			state = 2;
 			return;
 		}
 
@@ -87,16 +96,15 @@ public class FindAppointmentOwner extends Behaviour {
 
 		// If all have been checked then we empty the excluded set and regenerate it with an empty set
 		if (nextSlot == null){
-			checkedCount++;
+			patientAgent.swappingAttempts++;
 						
-			if (checkedCount == 3){
-				System.out.println("I ran 3 times");
-				step = 2;
+			if (patientAgent.swappingAttempts == 3){
+				state = 2;
 				return;
 			}
 
 			patientAgent.excluded.clear();
-			step = 0;
+			state = 0;
 			return;
 		}
 
@@ -105,7 +113,7 @@ public class FindAppointmentOwner extends Behaviour {
 		ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 		request.addReceiver(patientAgent.allocationAgent);
 		request.setContent(nextSlot.toString());
-		System.out.println(patientAgent.getName() + " requesting slot " + nextSlot.toString());
+		System.out.println(patientAgent.getName() + " requesting slot " + Integer.toString((nextSlot+1)));
 		patientAgent.swapSlot = nextSlot;
 		request.setSender(patientAgent.getAID());
 		request.setConversationId(conversationId);
@@ -113,7 +121,7 @@ public class FindAppointmentOwner extends Behaviour {
 		patientAgent.send(request);
 		reqTemplate = MessageTemplate.and(MessageTemplate.MatchConversationId(conversationId),
 				MessageTemplate.MatchInReplyTo(request.getReplyWith())); 
-		step = 1;
+		state = 1;
 
 	}
 
@@ -126,13 +134,13 @@ public class FindAppointmentOwner extends Behaviour {
 			} else {
 				if (reply.getPerformative() == ACLMessage.FAILURE) {
 					System.out.println(reply.getContent());
-					step = 0;
+					state = 0;
 				} else {
 					AID resourceOwner = (AID) reply.getContentObject();
 					patientAgent.highPriorityAppointmentOwner = resourceOwner;
-					System.out.println("slot owned by " + resourceOwner.getName());
+					System.out.println("Slot " + (patientAgent.swapSlot+1) + " owned by " + resourceOwner.getName());
 					patientAgent.addBehaviour(new ProposeSwap(patientAgent));
-					step = 2;
+					state = 2;
 				}
 			}
 		} else {

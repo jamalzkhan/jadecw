@@ -12,6 +12,13 @@ public class AllocateAppointment extends CyclicBehaviour {
 
 	private HospitalAgent hospitalAgent;
 	
+	/*
+	 * This behaviour receives requests messages and allocates slots
+	 * The first request to come in gets the first slot, no preferences 
+	 * are taken into account at this stage
+	 * 
+	 */
+	
 	public AllocateAppointment(HospitalAgent hospitalAgent) {
 		super(hospitalAgent);
 		this.hospitalAgent = hospitalAgent;
@@ -46,9 +53,9 @@ public class AllocateAppointment extends CyclicBehaviour {
 	}
 	
 	public int allocateAppointment(HashMap<Integer, HashSet<Integer>> preferences, AID agent){
-		for (int i = 0; i<hospitalAgent.appointments.length; i++){
-			if (hospitalAgent.appointments[i] == null){
-				hospitalAgent.appointments[i] = agent;
+		for (int i = 0; i<hospitalAgent.getAppointments().length; i++){
+			if (hospitalAgent.getAppointments()[i] == null){
+				hospitalAgent.getAppointments()[i] = agent;
 				return i;
 			}
 		}
